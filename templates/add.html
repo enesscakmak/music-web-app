@@ -5,56 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Entry</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script defer src="../static/script.js"></script>
+    <style>
+        input {
+            border: 1px solid black;
+        }
+    </style>
 </head>
 <body class="bg-gray-100">
-    <main class="container mx-auto mt-8">
-        <h2 class="text-xl font-bold">Add New Entry</h2>
-        <form id="addForm" class="bg-white p-4 shadow-md rounded">
-            <label for="entryType" class="block text-sm font-medium text-gray-700">Type:</label>
-            <select id="entryType" name="entryType" class="mt-1 block w-full">
-                <option value="song">Song</option>
-                <option value="album">Album</option>
-                <option value="artist">Artist</option>
-            </select>
-            <div id="formDetails" class="mt-4">
-                <!-- Dynamic fields based on selection -->
+    <nav class="bg-white shadow-md p-4">
+        <div class="container mx-auto flex justify-between">
+            <div>
+                <button id="homeButton" class="text-blue-500">Home</button>
             </div>
-            <button type="submit" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Add</button>
+        </div>
+    </nav>
+    <main class="container mx-auto mt-8">
+        <form id="addForm">
+            <div>
+                <label for="dataType" class="block text-sm font-medium text-gray-700">Data Type:</label>
+                <select id="dataType" name="dataType" class="mt-1 block w-full">
+                    <option value="song">Song</option>
+                    <option value="album">Album</option>
+                    <option value="artist">Artist</option>
+                </select>
+            </div>
+            <div id="songFields" class="mt-4">
+                <label for="title" class="block text-sm font-medium text-gray-700">Title:</label>
+                <input type="text" id="title" name="title" class="mt-1 block w-full">
+                <label for="duration" class="block text-sm font-medium text-gray-700 mt-4">Duration:</label>
+                <input type="text" id="duration" name="duration" class="mt-1 block w-full">
+                <label for="releaseDate" class="block text-sm font-medium text-gray-700 mt-4">Release Date:</label>
+                <input type="date" id="releaseDate" name="releaseDate" class="mt-1 block w-full">
+                <label for="artistName" class="block text-sm font-medium text-gray-700 mt-4">Artist Name:</label>
+                <input type="text" id="artistName" name="artistName" class="mt-1 block w-full">
+                <label for="albumName" class="block text-sm font-medium text-gray-700 mt-4">Album Name:</label>
+                <input type="text" id="albumName" name="albumName" class="mt-1 block w-full">
+            </div>
+            <div id="albumFields" class="mt-4" style="display: none;">
+                <label for="albumName" class="block text-sm font-medium text-gray-700">Album Name:</label>
+                <input type="text" id="albumName" name="albumName" class="mt-1 block w-full">
+                <label for="releaseYear" class="block text-sm font-medium text-gray-700 mt-4">Release Year:</label>
+                <input type="text" id="releaseYear" name="releaseYear" class="mt-1 block w-full">
+                <label for="artistName" class="block text-sm font-medium text-gray-700 mt-4">Artist Name:</label>
+                <input type="text" id="artistName" name="artistName" class="mt-1 block w-full">
+            </div>
+            <div id="artistFields" class="mt-4" style="display: none;">
+                <label for="artistName" class="block text-sm font-medium text-gray-700">Artist Name:</label>
+                <input type="text" id="artistName" name="artistName" class="mt-1 block w-full">
+            </div>
+            <button type="submit" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Submit</button>
         </form>
     </main>
     <script>
-        document.getElementById('entryType').addEventListener('change', function() {
-            const formDetails = document.getElementById('formDetails');
-            formDetails.innerHTML = '';
-            const entryType = this.value;
-            if (entryType === 'song') {
-                formDetails.innerHTML = `
-                    <label for="title" class="block text-sm font-medium text-gray-700">Title:</label>
-                    <input type="text" id="title" name="title" class="mt-1 block w-full">
-                    <label for="duration" class="block text-sm font-medium text-gray-700 mt-4">Duration:</label>
-                    <input type="text" id="duration" name="duration" class="mt-1 block w-full">
-                    <label for="releaseDate" class="block text-sm font-medium text-gray-700 mt-4">Release Date:</label>
-                    <input type="date" id="releaseDate" name="releaseDate" class="mt-1 block w-full">
-                    <label for="artistName" class="block text-sm font-medium text-gray-700 mt-4">Artist Name:</label>
-                    <input type="text" id="artistName" name="artistName" class="mt-1 block w-full">
-                    <label for="albumName" class="block text-sm font-medium text-gray-700 mt-4">Album Name:</label>
-                    <input type="text" id="albumName" name="albumName" class="mt-1 block w-full">
-                `;
-            } else if (entryType === 'album') {
-                formDetails.innerHTML = `
-                    <label for="name" class="block text-sm font-medium text-gray-700">Name:</label>
-                    <input type="text" id="name" name="name" class="mt-1 block w-full">
-                    <label for="releaseYear" class="block text-sm font-medium text-gray-700 mt-4">Release Year:</label>
-                    <input type="number" id="releaseYear" name="releaseYear" class="mt-1 block w-full">
-                    <label for="artistName" class="block text-sm font-medium text-gray-700 mt-4">Artist Name:</label>
-                    <input type="text" id="artistName" name="artistName" class="mt-1 block w-full">
-                `;
-            } else if (entryType === 'artist') {
-                formDetails.innerHTML = `
-                    <label for="artistName" class="block text-sm font-medium text-gray-700">Artist Name:</label>
-                    <input type="text" id="artistName" name="artistName" class="mt-1 block w-full">
-                `;
-            }
+        document.addEventListener('DOMContentLoaded', () => {
+            const dataType = document.getElementById('dataType');
+            const songFields = document.getElementById('songFields');
+            const albumFields = document.getElementById('albumFields');
+            const artistFields = document.getElementById('artistFields');
+
+            dataType.addEventListener('change', (e) => {
+                const value = e.target.value;
+                songFields.style.display = value === 'song' ? 'block' : 'none';
+                albumFields.style.display = value === 'album' ? 'block' : 'none';
+                artistFields.style.display = value === 'artist' ? 'block' : 'none';
+            });
+
+            document.getElementById('homeButton').addEventListener('click', () => {
+                window.location.href = '/';
+            });
         });
     </script>
 </body>

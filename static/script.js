@@ -1,9 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const homeButton = document.getElementById('homeButton');
+    const addButton = document.getElementById('addButton');
     const signUpButton = document.getElementById('signUpButton');
     const signInButton = document.getElementById('signInButton');
     const authModal = document.getElementById('authModal');
     const authTitle = document.getElementById('authTitle');
     const authForm = document.getElementById('authForm');
+    const homeContent = document.getElementById('homeContent');
+    const addContent = document.getElementById('addContent');
     const closeAuthModal = document.getElementById('closeAuthModal');
     const signUpFields = document.getElementById('signUpFields');
     const authButtons = document.querySelector('.auth-buttons');
@@ -19,19 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const removePlaylistButtons = document.querySelectorAll('.remove-playlist-btn');
     let selectedSongId = null;
 
-    function validateInput(input, type, maxLength) {
-        if (input.length > maxLength) {
-            return false;
-        }
-        if (type === 'int' && isNaN(parseInt(input))) {
-            return false;
-        }
-        if (type === 'date' && isNaN(Date.parse(input))) {
-            return false;
-        }
-        return true;
-    }
-
     addToPlaylistButtons.forEach(button => {
         button.addEventListener('click', () => {
             selectedSongId = button.getAttribute('data-song-id');
@@ -46,87 +37,81 @@ document.addEventListener('DOMContentLoaded', () => {
     selectPlaylistButtons.forEach(button => {
         button.addEventListener('click', () => {
             const playlistId = button.getAttribute('data-playlist-id');
-            if (validateInput(playlistId, 'int', 11)) {
+            if (selectedSongId && playlistId) {
                 fetch('/add_to_playlist', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ songId: selectedSongId, playlistId: playlistId })
+                    body: JSON.stringify({ songId: parseInt(selectedSongId), playlistId: parseInt(playlistId) })
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        alert('Song added to playlist successfully!');
-                        playlistModal.style.display = 'none';
+                        // Handle success
                     } else {
                         alert('Error adding song to playlist: ' + data.message);
                     }
+                    playlistModal.style.display = 'none';
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     alert('An error occurred while adding the song to the playlist.');
                 });
             } else {
-                alert('Invalid playlist ID');
+                alert('Invalid song or playlist ID');
             }
         });
     });
 
     createNewPlaylistButton.addEventListener('click', () => {
         const playlistName = prompt('Enter new playlist name:');
-        if (validateInput(playlistName, 'string', 150)) {
-            fetch('/create_playlist', {
+        if (playlistName) {
+            fetch('/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ playlistName: playlistName })
+                body: JSON.stringify({ data_type: 'playlist', name: playlistName })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    alert('Playlist created successfully!');
-                    refreshPlaylistList();
+                    // Handle success
                 } else {
                     alert('Error creating playlist: ' + data.message);
                 }
             })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while creating the playlist.');
-            });
-        } else {
-            alert('Invalid playlist name');
+            .catch(error => console.error('Error:', error));
         }
     });
 
     playlistList.addEventListener('click', (event) => {
         if (event.target.classList.contains('select-playlist-btn')) {
             const playlistId = event.target.getAttribute('data-playlist-id');
-            if (validateInput(playlistId, 'int', 11)) {
+            if (selectedSongId && playlistId) {
                 fetch('/add_to_playlist', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ songId: selectedSongId, playlistId: playlistId })
+                    body: JSON.stringify({ songId: parseInt(selectedSongId), playlistId: parseInt(playlistId) })
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        alert('Song added to playlist successfully!');
-                        playlistModal.style.display = 'none';
+                        // Handle success
                     } else {
                         alert('Error adding song to playlist: ' + data.message);
                     }
+                    playlistModal.style.display = 'none';
                 })
                 .catch(error => {
                     console.error('Error:', error);
                     alert('An error occurred while adding the song to the playlist.');
                 });
             } else {
-                alert('Invalid playlist ID');
+                alert('Invalid song or playlist ID');
             }
         }
     });
@@ -140,19 +125,19 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    const playlistList = document.getElementById('playlistList');
-                    playlistList.innerHTML = '';
-                    data.playlists.forEach(playlist => {
-                        const li = document.createElement('li');
-                        li.innerHTML = `<button class="select-playlist-btn" data-playlist-id="${playlist.PlaylistId}">${playlist.PlaylistName}</button>`;
-                        playlistList.appendChild(li);
-                    });
-                } else {
-                    alert('Error fetching playlists: ' + data.message);
+                    // Handle success
                 }
             })
             .catch(error => console.error('Error:', error));
     }
+
+    homeButton.addEventListener('click', () => {
+        window.location.href = '/';
+    });
+
+    addButton.addEventListener('click', () => {
+        window.location.href = '/add';
+    });
 
     signUpButton.addEventListener('click', () => {
         authTitle.textContent = 'Sign Up';
@@ -174,57 +159,32 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const formData = new FormData(authForm);
         const action = authTitle.textContent === 'Sign In' ? '/signin' : '/signup';
-        const data = {};
-        formData.forEach((value, key) => {
-            data[key] = value;
-        });
 
-        if (validateInput(data.username, 'string', 100) &&
-            validateInput(data.email, 'string', 150) &&
-            validateInput(data.password, 'string', 255) &&
-            validateInput(data.nameSurname, 'string', 100)) {
-            fetch(action, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alert('Authentication successful!');
-                    authModal.style.display = 'none';
-                    if (action === '/signin') {
-                        userInfo.textContent = data.nameSurname;
-                        userContainer.style.display = 'flex';
-                        authButtons.style.display = 'none';
-                    }
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        } else {
-            alert('Invalid input data');
-        }
-    });
-
-    signOutButton.addEventListener('click', () => {
-        fetch('/signout', {
+        fetch(action, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            body: formData
         })
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                alert('Signed out successfully!');
-                userContainer.style.display = 'none';
-                authButtons.style.display = 'flex';
+                // Handle success
             } else {
-                alert('Error: ' + data.message);
+                // Handle error
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    signOutButton.addEventListener('click', () => {
+        fetch('/signout', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Handle success
+            } else {
+                // Handle error
             }
         })
         .catch(error => console.error('Error:', error));
@@ -235,9 +195,12 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(response => response.json())
     .then(data => {
         if (data.signed_in) {
-            userInfo.textContent = data.nameSurname;
-            userContainer.style.display = 'flex';
             authButtons.style.display = 'none';
+            userContainer.style.display = 'flex';
+            userInfo.textContent = data.nameSurname;
+        } else {
+            authButtons.style.display = 'flex';
+            userContainer.style.display = 'none';
         }
     })
     .catch(error => console.error('Error:', error));
@@ -245,28 +208,23 @@ document.addEventListener('DOMContentLoaded', () => {
     removePlaylistButtons.forEach(button => {
         button.addEventListener('click', () => {
             const playlistId = button.getAttribute('data-playlist-id');
-            if (validateInput(playlistId, 'int', 11)) {
-                if (confirm('Are you sure you want to delete this playlist?')) {
-                    fetch('/remove_playlist', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ playlistId: playlistId })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            alert('Playlist removed successfully!');
-                            refreshPlaylistList();
-                        } else {
-                            alert('Error removing playlist: ' + data.message);
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-                }
-            } else {
-                alert('Invalid playlist ID');
+            if (confirm('Are you sure you want to delete this playlist?')) {
+                fetch('/remove_playlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ playlistId: parseInt(playlistId) })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Handle success
+                    } else {
+                        alert('Error removing playlist: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             }
         });
     });
