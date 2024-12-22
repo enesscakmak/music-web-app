@@ -18,7 +18,6 @@ logging.basicConfig(level=logging.DEBUG)
 def get_db_connection():
     return mysql.connector.connect(**db_config)
 
-# Remove the /add route from app.py
 @app.route('/')
 def home():
     conn = get_db_connection()
