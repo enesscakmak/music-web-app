@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectPlaylistButtons = document.querySelectorAll('.select-playlist-btn');
     const createNewPlaylistButton = document.getElementById('createNewPlaylist');
     const playlistList = document.getElementById('playlistList');
+    const removePlaylistButtons = document.querySelectorAll('.remove-playlist-btn');
     let selectedSongId = null;
 
     addToPlaylistButtons.forEach(button => {
@@ -246,4 +247,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     })
     .catch(error => console.error('Error:', error));
+
+    removePlaylistButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const playlistId = button.getAttribute('data-playlist-id');
+            if (confirm('Are you sure you want to delete this playlist?')) {
+                fetch('/remove_playlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ playlistId: parseInt(playlistId) })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Playlist removed successfully!');
+                        button.parentElement.remove();
+                    } else {
+                        alert('Error removing playlist: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        });
+    });
 });
