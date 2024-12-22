@@ -48,7 +48,7 @@ def home():
 def add():
     if request.method == 'POST':
         data = request.get_json()
-        data_type = data.get('data_type')
+        data_type = data.get('dataType')
         conn = get_db_connection()
         cursor = conn.cursor()
 
@@ -59,42 +59,16 @@ def add():
                 release_date = data.get('releaseDate')
                 artist_name = data.get('artistName')
                 album_name = data.get('albumName')
-
-                cursor.execute("SELECT ArtistId FROM Artist WHERE ArtistName = %s", (artist_name,))
-                artist = cursor.fetchone()
-                if not artist:
-                    cursor.execute("INSERT INTO Artist (ArtistName) VALUES (%s)", (artist_name,))
-                    artist_id = cursor.lastrowid
-                else:
-                    artist_id = artist['ArtistId']
-
-                cursor.execute("SELECT AlbumId FROM Album WHERE AlbumName = %s", (album_name,))
-                album = cursor.fetchone()
-                if not album:
-                    cursor.execute("INSERT INTO Album (AlbumName, ArtistId) VALUES (%s, %s)", (album_name, artist_id))
-                    album_id = cursor.lastrowid
-                else:
-                    album_id = album['AlbumId']
-
-                cursor.execute("INSERT INTO Song (SongTitle, SongDuration, SongReleaseDate, AlbumId, ArtistId) VALUES (%s, %s, %s, %s, %s)",
-                               (title, duration, release_date, album_id, artist_id))
+                cursor.execute("INSERT INTO Song (SongTitle, SongDuration, SongReleaseDate, ArtistId, AlbumId) VALUES (%s, %s, %s, (SELECT ArtistId FROM Artist WHERE ArtistName=%s), (SELECT AlbumId FROM Album WHERE AlbumName=%s))",
+                               (title, duration, release_date, artist_name, album_name))
                 response = {'status': 'success', 'message': 'Song added successfully!'}
 
             elif data_type == 'album':
-                name = data.get('name')
+                name = data.get('albumName')
                 release_year = data.get('releaseYear')
                 artist_name = data.get('artistName')
-
-                cursor.execute("SELECT ArtistId FROM Artist WHERE ArtistName = %s", (artist_name,))
-                artist = cursor.fetchone()
-                if not artist:
-                    cursor.execute("INSERT INTO Artist (ArtistName) VALUES (%s)", (artist_name,))
-                    artist_id = cursor.lastrowid
-                else:
-                    artist_id = artist['ArtistId']
-
-                cursor.execute("INSERT INTO Album (AlbumName, AlbumReleaseYear, ArtistId) VALUES (%s, %s, %s)",
-                               (name, release_year, artist_id))
+                cursor.execute("INSERT INTO Album (AlbumName, AlbumReleaseYear, ArtistId) VALUES (%s, %s, (SELECT ArtistId FROM Artist WHERE ArtistName=%s))",
+                               (name, release_year, artist_name))
                 response = {'status': 'success', 'message': 'Album added successfully!'}
 
             elif data_type == 'artist':
@@ -110,8 +84,8 @@ def add():
             cursor.close()
             conn.close()
             return jsonify(response)
-
-    return render_template('add.html')
+    else:
+        return render_template('add.html')
 
 @app.route('/signup', methods=['POST'])
 def signup():
