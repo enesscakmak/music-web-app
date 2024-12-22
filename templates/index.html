@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music App</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script defer src="../static/./script.js"></script>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-md p-4">
+    <div class="container mx-auto flex justify-between">
+        <div>
+            <button id="homeButton" class="text-blue-500">Home</button>
+            <button id="addButton" class="text-blue-500">Add</button>
+        </div>
+        <div class="auth-buttons">
+            <button id="signUpButton" class="text-blue-500 px-3">Sign Up</button>
+            <button id="signInButton" class="text-blue-500">Sign In</button>
+        </div>
+        <div id="userContainer" class="flex items-center" style="display: none;">
+            <div id="userInfo" class="text-blue-500 mr-4"></div>
+            <button id="signOutButton" class="text-blue-500">Sign Out</button>
+        </div>
+    </div>
+</nav>
+
+
+
+    <main class="container mx-auto mt-8">
+        <div id="homeContent">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <h2 class="text-xl font-bold">Songs</h2>
+                    <ul id="randomSongsList">
+                        <!-- Add this inside the song list loop in index.html -->
+{% for song in songs %}
+<li class="flex items-center">
+    {{ song.SongTitle }}
+    <button class="add-to-playlist-btn text-blue-500" data-song-id="{{ song.SongId }}">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+    </button>
+</li>
+{% endfor %}
+
+
+                    </ul>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold">Playlists</h2>
+                    <ul id="playlistsList">
+                        {% for playlist in playlists %}
+                        <li>{{ playlist.PlaylistName }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold">Artists</h2>
+                    <ul id="artistsList">
+                        {% for artist in artists %}
+                        <li>{{ artist.ArtistName }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold">Albums</h2>
+                    <ul id="albumsList">
+                        {% for album in albums %}
+                        <li>{{ album.AlbumName }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="addContent" style="display: none;">
+            <h2 class="text-xl font-bold">Add New Entry</h2>
+            <form id="addForm" class="bg-white p-4 shadow-md rounded">
+                <label for="entryType" class="block text-sm font-medium text-gray-700">Type:</label>
+                <select id="entryType" name="entryType" class="mt-1 block w-full">
+                    <option value="song">Song</option>
+                    <option value="album">Album</option>
+                    <option value="playlist">Playlist</option>
+                    <option value="artist">Artist</option>
+                </select>
+                <label for="entryDetails" class="block text-sm font-medium text-gray-700 mt-4">Details:</label>
+                <textarea id="entryDetails" name="entryDetails" class="mt-1 block w-full" placeholder="Enter details..."></textarea>
+                <button type="submit" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Submit</button>
+            </form>
+        </div>
+    </main>
+
+    <div id="authModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center" style="display: none;">
+        <div class="bg-white p-4 rounded shadow-md relative">
+            <button id="closeAuthModal" class="absolute top-2 right-2 text-gray-500">&times;</button>
+            <h2 id="authTitle" class="text-xl font-bold">Sign In</h2>
+            <form id="authForm">
+                <div id="signUpFields" style="display: none;">
+                    <label for="username" class="block text-sm font-medium text-gray-700">Username:</label>
+                    <input type="text" id="username" name="username" class="mt-1 block w-full">
+                    <label for="nameSurname" class="block text-sm font-medium text-gray-700 mt-4">Name Surname:</label>
+                    <input type="text" id="nameSurname" name="nameSurname" class="mt-1 block w-full">
+                </div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email:</label>
+                <input type="email" id="email" name="email" class="mt-1 block w-full" required>
+                <label for="password" class="block text-sm font-medium text-gray-700 mt-4">Password:</label>
+                <input type="password" id="password" name="password" class="mt-1 block w-full" required>
+                <button type="submit" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Submit</button>
+            </form>
+        </div>
+    </div>
+<!-- Add this modal at the end of the body in index.html -->
+<div id="playlistModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white p-4 rounded shadow-md">
+        <h2 class="text-xl font-bold">Select Playlist</h2>
+        <ul id="playlistList">
+            {% for playlist in playlists %}
+            <li>
+                <button class="select-playlist-btn" data-playlist-id="{{ playlist.PlaylistId }}">{{ playlist.PlaylistName }}</button>
+            </li>
+            {% endfor %}
+        </ul>
+        <button id="createNewPlaylist" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Create New</button>
+        <button id="closePlaylistModal" class="mt-4 bg-gray-500 text-white py-2 px-4 rounded">Close</button>
+    </div>
+</div>
+</body>
+</html>

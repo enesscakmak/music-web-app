@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Entry</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script defer src="script.js"></script>
+</head>
+<body class="bg-gray-100">
+    <nav class="bg-white shadow-md p-4">
+        <div class="container mx-auto flex justify-between">
+            <button onclick="location.href='/'" class="text-blue-500">Home</button>
+            <button onclick="location.href='/add'" class="text-blue-500">Add</button>
+        </div>
+    </nav>
+
+    <main class="container mx-auto mt-8">
+        <h1 class="text-2xl font-bold">Add New Entry</h1>
+        <form method="POST" action="/add" class="bg-white p-4 shadow-md rounded">
+            <label for="type" class="block text-sm font-medium text-gray-700">Select Type:</label>
+            <select id="type" name="type" class="mt-1 block w-full" required>
+                <option value="song">Song</option>
+                <option value="album">Album</option>
+                <option value="playlist">Playlist</option>
+                <option value="artist">Artist</option>
+            </select>
+
+            <div id="formDetails" class="mt-4">
+                <!-- Dynamic fields based on selection -->
+            </div>
+
+            <button type="submit" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Add</button>
+        </form>
+    </main>
+
+    <script>
+        const formDetails = document.getElementById('formDetails');
+        const typeSelector = document.getElementById('type');
+
+        const formTemplates = {
+            song: `
+                <label for="title" class="block text-sm font-medium text-gray-700">Title:</label>
+                <input type="text" id="title" name="title" class="mt-1 block w-full" required>
+                <label for="duration" class="block text-sm font-medium text-gray-700 mt-4">Duration:</label>
+                <input type="text" id="duration" name="duration" class="mt-1 block w-full" placeholder="hh:mm:ss" required>
+                <label for="releaseDate" class="block text-sm font-medium text-gray-700 mt-4">Release Date:</label>
+                <input type="date" id="releaseDate" name="releaseDate" class="mt-1 block w-full" required>
+                <label for="artistId" class="block text-sm font-medium text-gray-700 mt-4">Artist ID:</label>
+                <input type="number" id="artistId" name="artistId" class="mt-1 block w-full" required>
+                <label for="albumId" class="block text-sm font-medium text-gray-700 mt-4">Album ID:</label>
+                <input type="number" id="albumId" name="albumId" class="mt-1 block w-full" required>
+            `,
+            album: `
+                <label for="name" class="block text-sm font-medium text-gray-700">Album Name:</label>
+                <input type="text" id="name" name="name" class="mt-1 block w-full" required>
+                <label for="releaseYear" class="block text-sm font-medium text-gray-700 mt-4">Release Year:</label>
+                <input type="number" id="releaseYear" name="releaseYear" class="mt-1 block w-full" required>
+                <label for="artistId" class="block text-sm font-medium text-gray-700 mt-4">Artist ID:</label>
+                <input type="number" id="artistId" name="artistId" class="mt-1 block w-full" required>
+            `,
+            playlist: `
+                <label for="playlistName" class="block text-sm font-medium text-gray-700">Playlist Name:</label>
+                <input type="text" id="playlistName" name="playlistName" class="mt-1 block w-full" required>
+            `,
+            artist: `
+                <label for="artistName" class="block text-sm font-medium text-gray-700">Artist Name:</label>
+                <input type="text" id="artistName" name="artistName" class="mt-1 block w-full" required>
+            `
+        };
+
+        typeSelector.addEventListener('change', () => {
+            formDetails.innerHTML = formTemplates[typeSelector.value];
+        });
+
+        typeSelector.dispatchEvent(new Event('change'));
+    </script>
+</body>
+</html>
