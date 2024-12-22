@@ -44,7 +44,7 @@ def home():
     conn.close()
 
     return render_template('index.html', songs=songs, playlists=playlists, artists=artists, albums=albums)
-@app.route('/add', methods=['POST'])
+@app.route('/add', methods=['GET', 'POST'])
 def add():
     if request.method == 'POST':
         data = request.get_json()
@@ -54,24 +54,53 @@ def add():
 
         try:
             if data_type == 'song':
-                # Add song logic
-                pass
-            elif data_type == 'album':
-                # Add album logic
-                pass
-            elif data_type == 'playlist':
-                playlist_name = data.get('playlistName')
-                user_id = session.get('user_id')
-                if user_id and playlist_name:
-                    cursor.execute("INSERT INTO Playlist (PlaylistName, PlaylistCreationDate, UserId) VALUES (%s, %s, %s)",
-                                   (playlist_name, date.today(), user_id))
-                    playlist_id = cursor.lastrowid
-                    response = {'status': 'success', 'message': 'Playlist added successfully!', 'playlistId': playlist_id}
+                title = data.get('title')
+                duration = data.get('duration')
+                release_date = data.get('releaseDate')
+                artist_name = data.get('artistName')
+                album_name = data.get('albumName')
+
+                cursor.execute("SELECT ArtistId FROM Artist WHERE ArtistName = %s", (artist_name,))
+                artist = cursor.fetchone()
+                if not artist:
+                    cursor.execute("INSERT INTO Artist (ArtistName) VALUES (%s)", (artist_name,))
+                    artist_id = cursor.lastrowid
                 else:
-                    raise ValueError("Invalid user ID or playlist name")
+                    artist_id = artist['ArtistId']
+
+                cursor.execute("SELECT AlbumId FROM Album WHERE AlbumName = %s", (album_name,))
+                album = cursor.fetchone()
+                if not album:
+                    cursor.execute("INSERT INTO Album (AlbumName, ArtistId) VALUES (%s, %s)", (album_name, artist_id))
+                    album_id = cursor.lastrowid
+                else:
+                    album_id = album['AlbumId']
+
+                cursor.execute("INSERT INTO Song (SongTitle, SongDuration, SongReleaseDate, AlbumId, ArtistId) VALUES (%s, %s, %s, %s, %s)",
+                               (title, duration, release_date, album_id, artist_id))
+                response = {'status': 'success', 'message': 'Song added successfully!'}
+
+            elif data_type == 'album':
+                name = data.get('name')
+                release_year = data.get('releaseYear')
+                artist_name = data.get('artistName')
+
+                cursor.execute("SELECT ArtistId FROM Artist WHERE ArtistName = %s", (artist_name,))
+                artist = cursor.fetchone()
+                if not artist:
+                    cursor.execute("INSERT INTO Artist (ArtistName) VALUES (%s)", (artist_name,))
+                    artist_id = cursor.lastrowid
+                else:
+                    artist_id = artist['ArtistId']
+
+                cursor.execute("INSERT INTO Album (AlbumName, AlbumReleaseYear, ArtistId) VALUES (%s, %s, %s)",
+                               (name, release_year, artist_id))
+                response = {'status': 'success', 'message': 'Album added successfully!'}
+
             elif data_type == 'artist':
-                # Add artist logic
-                pass
+                artist_name = data.get('artistName')
+                cursor.execute("INSERT INTO Artist (ArtistName) VALUES (%s)", (artist_name,))
+                response = {'status': 'success', 'message': 'Artist added successfully!'}
 
             conn.commit()
         except Exception as e:

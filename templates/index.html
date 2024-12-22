@@ -9,23 +9,21 @@
 </head>
 <body class="bg-gray-100">
     <nav class="bg-white shadow-md p-4">
-    <div class="container mx-auto flex justify-between">
-        <div>
-            <button id="homeButton" class="text-blue-500">Home</button>
-            <button id="addButton" class="text-blue-500">Add</button>
+        <div class="container mx-auto flex justify-between">
+            <div>
+                <button id="homeButton" class="text-blue-500">Home</button>
+                <button id="addButton" class="text-blue-500">Add</button>
+            </div>
+            <div class="auth-buttons">
+                <button id="signUpButton" class="text-blue-500 px-3">Sign Up</button>
+                <button id="signInButton" class="text-blue-500">Sign In</button>
+            </div>
+            <div id="userContainer" class="flex items-center" style="display: none;">
+                <div id="userInfo" class="text-blue-500 mr-4"></div>
+                <button id="signOutButton" class="text-blue-500">Sign Out</button>
+            </div>
         </div>
-        <div class="auth-buttons">
-            <button id="signUpButton" class="text-blue-500 px-3">Sign Up</button>
-            <button id="signInButton" class="text-blue-500">Sign In</button>
-        </div>
-        <div id="userContainer" class="flex items-center" style="display: none;">
-            <div id="userInfo" class="text-blue-500 mr-4"></div>
-            <button id="signOutButton" class="text-blue-500">Sign Out</button>
-        </div>
-    </div>
-</nav>
-
-
+    </nav>
 
     <main class="container mx-auto mt-8">
         <div id="homeContent">
@@ -33,36 +31,33 @@
                 <div>
                     <h2 class="text-xl font-bold">Songs</h2>
                     <ul id="randomSongsList">
-                        <!-- Add this inside the song list loop in index.html -->
-{% for song in songs %}
-<li class="flex items-center">
-    {{ song.SongTitle }}
-    <button class="add-to-playlist-btn text-blue-500" data-song-id="{{ song.SongId }}">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-    </button>
-</li>
-{% endfor %}
-
-
+                        {% for song in songs %}
+                        <li class="flex items-center">
+                            {{ song.SongTitle }}
+                            <button class="add-to-playlist-btn text-blue-500" data-song-id="{{ song.SongId }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                            </button>
+                        </li>
+                        {% endfor %}
                     </ul>
                 </div>
                 <div>
-    <h2 class="text-xl font-bold">Playlists</h2>
-    <ul id="playlistsList">
-        {% for playlist in playlists %}
-        <li class="flex items-center">
-            {{ playlist.PlaylistName }}
-            <button class="remove-playlist-btn text-red-500 ml-2" data-playlist-id="{{ playlist.PlaylistId }}">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </li>
-        {% endfor %}
-    </ul>
-</div>
+                    <h2 class="text-xl font-bold">Playlists</h2>
+                    <ul id="playlistsList">
+                        {% for playlist in playlists %}
+                        <li class="flex items-center">
+                            {{ playlist.PlaylistName }}
+                            <button class="remove-playlist-btn text-red-500 ml-2" data-playlist-id="{{ playlist.PlaylistId }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
                 <div>
                     <h2 class="text-xl font-bold">Artists</h2>
                     <ul id="artistsList">
@@ -80,22 +75,6 @@
                     </ul>
                 </div>
             </div>
-        </div>
-
-        <div id="addContent" style="display: none;">
-            <h2 class="text-xl font-bold">Add New Entry</h2>
-            <form id="addForm" class="bg-white p-4 shadow-md rounded">
-                <label for="entryType" class="block text-sm font-medium text-gray-700">Type:</label>
-                <select id="entryType" name="entryType" class="mt-1 block w-full">
-                    <option value="song">Song</option>
-                    <option value="album">Album</option>
-                    <option value="playlist">Playlist</option>
-                    <option value="artist">Artist</option>
-                </select>
-                <label for="entryDetails" class="block text-sm font-medium text-gray-700 mt-4">Details:</label>
-                <textarea id="entryDetails" name="entryDetails" class="mt-1 block w-full" placeholder="Enter details..."></textarea>
-                <button type="submit" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Submit</button>
-            </form>
         </div>
     </main>
 
@@ -118,20 +97,20 @@
             </form>
         </div>
     </div>
-<!-- Add this modal at the end of the body in index.html -->
-<div id="playlistModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-    <div class="bg-white p-4 rounded shadow-md">
-        <h2 class="text-xl font-bold">Select Playlist</h2>
-        <ul id="playlistList">
-            {% for playlist in playlists %}
-            <li>
-                <button class="select-playlist-btn" data-playlist-id="{{ playlist.PlaylistId }}">{{ playlist.PlaylistName }}</button>
-            </li>
-            {% endfor %}
-        </ul>
-        <button id="createNewPlaylist" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Create New</button>
-        <button id="closePlaylistModal" class="mt-4 bg-gray-500 text-white py-2 px-4 rounded">Close</button>
+
+    <div id="playlistModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-white p-4 rounded shadow-md">
+            <h2 class="text-xl font-bold">Select Playlist</h2>
+            <ul id="playlistList">
+                {% for playlist in playlists %}
+                <li>
+                    <button class="select-playlist-btn" data-playlist-id="{{ playlist.PlaylistId }}">{{ playlist.PlaylistName }}</button>
+                </li>
+                {% endfor %}
+            </ul>
+            <button id="createNewPlaylist" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Create New</button>
+            <button id="closePlaylistModal" class="mt-4 bg-gray-500 text-white py-2 px-4 rounded">Close</button>
+        </div>
     </div>
-</div>
 </body>
 </html>
