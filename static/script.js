@@ -35,34 +35,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     selectPlaylistButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const playlistId = button.getAttribute('data-playlist-id');
-            if (selectedSongId && playlistId) {
-                fetch('/add_to_playlist', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ songId: parseInt(selectedSongId), playlistId: parseInt(playlistId) })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        // Handle success
-                    } else {
-                        alert('Error adding song to playlist: ' + data.message);
-                    }
-                    playlistModal.style.display = 'none';
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while adding the song to the playlist.');
-                });
-            } else {
-                alert('Invalid song or playlist ID');
-            }
-        });
+    button.addEventListener('click', () => {
+        const playlistId = button.getAttribute('data-playlist-id');
+        if (selectedSongId && playlistId) {
+            fetch('/add_to_playlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ songId: parseInt(selectedSongId), playlistId: parseInt(playlistId) })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+
+                } else {
+                    alert('Error adding song to playlist: ' + data.message);
+                }
+                playlistModal.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while adding the song to the playlist.');
+            });
+        } else {
+            alert('Invalid song or playlist ID');
+        }
     });
+});
 
     createNewPlaylistButton.addEventListener('click', () => {
         const playlistName = prompt('Enter new playlist name:');
@@ -72,12 +72,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ data_type: 'playlist', name: playlistName })
+                body: JSON.stringify({ data_type: 'playlist', playlistName: playlistName })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    // Handle success
+                    refreshPlaylistList();
                 } else {
                     alert('Error creating playlist: ' + data.message);
                 }
@@ -100,16 +100,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        // Handle success
+                        alert('Song added to playlist successfully!');
                     } else {
                         alert('Error adding song to playlist: ' + data.message);
                     }
                     playlistModal.style.display = 'none';
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while adding the song to the playlist.');
-                });
+                .catch(error => console.error('Error:', error));
             } else {
                 alert('Invalid song or playlist ID');
             }
@@ -125,15 +122,52 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    // Handle success
+                    playlistList.innerHTML = '';
+                    data.playlists.forEach(playlist => {
+                        const li = document.createElement('li');
+                        const button = document.createElement('button');
+                        button.className = 'select-playlist-btn';
+                        button.setAttribute('data-playlist-id', playlist.PlaylistId);
+                        button.textContent = playlist.PlaylistName;
+                        button.addEventListener('click', () => {
+                            const playlistId = button.getAttribute('data-playlist-id');
+                            if (selectedSongId && playlistId) {
+                                fetch('/add_to_playlist', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ songId: selectedSongId, playlistId: playlistId })
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.status === 'success') {
+                                        alert('Song added to playlist successfully!');
+                                    } else {
+                                        alert('Error adding song to playlist: ' + data.message);
+                                    }
+                                    playlistModal.style.display = 'none';
+                                })
+                                .catch(error => console.error('Error:', error));
+                            } else {
+                                alert('Invalid song or playlist ID');
+                            }
+                        });
+                        li.appendChild(button);
+                        playlistList.appendChild(li);
+                    });
+                } else {
+                    alert('Error fetching playlists: ' + data.message);
                 }
             })
             .catch(error => console.error('Error:', error));
     }
 
+
     homeButton.addEventListener('click', () => {
-        window.location.href = '/';
+        window.location.href = '/home';
     });
+
 
     addButton.addEventListener('click', () => {
         window.location.href = '/add';
@@ -167,9 +201,13 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                // Handle success
+                alert(data.message);
+                authModal.style.display = 'none';
+                authButtons.style.display = 'none';
+                userContainer.style.display = 'flex';
+                userInfo.textContent = data.nameSurname;
             } else {
-                // Handle error
+                alert(data.message);
             }
         })
         .catch(error => console.error('Error:', error));
@@ -182,9 +220,12 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                // Handle success
+                alert(data.message);
+                authButtons.style.display = 'flex';
+                userContainer.style.display = 'none';
+                userInfo.textContent = '';
             } else {
-                // Handle error
+                alert(data.message);
             }
         })
         .catch(error => console.error('Error:', error));
@@ -219,7 +260,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        // Handle success
+                        alert('Playlist removed successfully!');
+                        button.parentElement.remove();
                     } else {
                         alert('Error removing playlist: ' + data.message);
                     }
