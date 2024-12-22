@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     homeButton.addEventListener('click', () => {
-        window.location.href = '/home';
+        window.location.href = '/';
     });
 
 
