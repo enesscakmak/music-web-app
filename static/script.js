@@ -35,34 +35,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     selectPlaylistButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        const playlistId = button.getAttribute('data-playlist-id');
-        if (selectedSongId && playlistId) {
-            fetch('/add_to_playlist', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ songId: parseInt(selectedSongId), playlistId: parseInt(playlistId) })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-
-                } else {
-                    alert('Error adding song to playlist: ' + data.message);
-                }
-                playlistModal.style.display = 'none';
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while adding the song to the playlist.');
-            });
-        } else {
-            alert('Invalid song or playlist ID');
-        }
+        button.addEventListener('click', () => {
+            const playlistId = button.getAttribute('data-playlist-id');
+            if (selectedSongId && playlistId) {
+                fetch('/add_to_playlist', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ songId: parseInt(selectedSongId), playlistId: parseInt(playlistId) })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Song added to playlist successfully!');
+                        window.location.reload();
+                    } else {
+                        alert('Error adding song to playlist: ' + data.message);
+                    }
+                    playlistModal.style.display = 'none';
+                })
+                .catch(error => console.error('Error:', error));
+            } else {
+                alert('Invalid song or playlist ID');
+            }
+        });
     });
-});
 
     createNewPlaylistButton.addEventListener('click', () => {
         const playlistName = prompt('Enter new playlist name:');
@@ -77,7 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    refreshPlaylistList();
+                    alert('Playlist created successfully!');
+                    window.location.reload();
                 } else {
                     alert('Error creating playlist: ' + data.message);
                 }
@@ -101,6 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 .then(data => {
                     if (data.status === 'success') {
                         alert('Song added to playlist successfully!');
+                        window.location.reload();
                     } else {
                         alert('Error adding song to playlist: ' + data.message);
                     }
@@ -143,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 .then(data => {
                                     if (data.status === 'success') {
                                         alert('Song added to playlist successfully!');
+                                        window.location.reload();
                                     } else {
                                         alert('Error adding song to playlist: ' + data.message);
                                     }
@@ -163,11 +164,9 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => console.error('Error:', error));
     }
 
-
     homeButton.addEventListener('click', () => {
         window.location.href = '/';
     });
-
 
     addButton.addEventListener('click', () => {
         window.location.href = '/add';
@@ -206,6 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 authButtons.style.display = 'none';
                 userContainer.style.display = 'flex';
                 userInfo.textContent = data.nameSurname;
+                window.location.reload();
             } else {
                 alert(data.message);
             }
@@ -224,6 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 authButtons.style.display = 'flex';
                 userContainer.style.display = 'none';
                 userInfo.textContent = '';
+                window.location.reload();
             } else {
                 alert(data.message);
             }
@@ -262,6 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (data.status === 'success') {
                         alert('Playlist removed successfully!');
                         button.parentElement.remove();
+                        window.location.reload();
                     } else {
                         alert('Error removing playlist: ' + data.message);
                     }

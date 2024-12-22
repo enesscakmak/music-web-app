@@ -58,49 +58,50 @@
         </form>
     </main>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const dataType = document.getElementById('dataType');
-            const songFields = document.getElementById('songFields');
-            const albumFields = document.getElementById('albumFields');
-            const artistFields = document.getElementById('artistFields');
+    document.addEventListener('DOMContentLoaded', () => {
+        const dataType = document.getElementById('dataType');
+        const songFields = document.getElementById('songFields');
+        const albumFields = document.getElementById('albumFields');
+        const artistFields = document.getElementById('artistFields');
 
-            dataType.addEventListener('change', (e) => {
-                const value = e.target.value;
-                songFields.style.display = value === 'song' ? 'block' : 'none';
-                albumFields.style.display = value === 'album' ? 'block' : 'none';
-                artistFields.style.display = value === 'artist' ? 'block' : 'none';
-            });
-
-            document.getElementById('homeButton').addEventListener('click', () => {
-                window.location.href = '/';
-            });
-
-            document.getElementById('addForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                const data = {};
-                formData.forEach((value, key) => {
-                    data[key] = value;
-                });
-
-                fetch('/add', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        alert(data.message);
-                    } else {
-                        alert('Error: ' + data.message);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-            });
+        dataType.addEventListener('change', (e) => {
+            const value = e.target.value;
+            songFields.style.display = value === 'song' ? 'block' : 'none';
+            albumFields.style.display = value === 'album' ? 'block' : 'none';
+            artistFields.style.display = value === 'artist' ? 'block' : 'none';
         });
-    </script>
+
+        document.getElementById('homeButton').addEventListener('click', () => {
+            window.location.href = '/';
+        });
+
+        document.getElementById('addForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            fetch('/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
 </body>
 </html>
