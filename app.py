@@ -41,7 +41,10 @@ def home():
                    HAVING COUNT(SongId) > 0 ORDER BY RAND() LIMIT 5;""")
     artists = cursor.fetchall()
 
-    cursor.execute("SELECT AlbumId, AlbumName FROM Album ORDER BY RAND() LIMIT 5;")
+    cursor.execute("""SELECT AlbumName, COUNT(SongId) AS SongCount
+                    FROM Album JOIN Song On Album.AlbumId = Song.AlbumId
+                     GROUP BY AlbumName
+                     HAVING Count(SongId)> 0 ORDER BY RAND() LIMIT 5;""")
     albums = cursor.fetchall()
 
     cursor.close()
