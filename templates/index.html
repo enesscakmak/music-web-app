@@ -7,109 +7,125 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script defer src="../static/./script.js"></script>
 </head>
-<body class="bg-gray-100">
-    <nav class="bg-white shadow-md p-4">
-        <div class="container mx-auto flex justify-between">
-            <div>
-                <button id="homeButton" class="text-blue-500">Home</button>
-                <button id="addButton" class="text-blue-500">Add</button>
+<body class="bg-gradient-to-r from-purple-500 to-indigo-600 text-gray-100 min-h-screen">
+    <nav class="bg-purple-800 shadow-lg p-4 sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+<div class="flex items-center space-x-6">
+
+                <h1 class="text-3xl font-bold text-white">MusicApp</h1>
+
+
+                <button id="homeButton" class="text-xl text-gray-200 hover:text-white">Home</button>
+                <button id="addButton" class="text-xl text-gray-200 hover:text-white">Add</button>
+
+</div>
+            <div class="text-xl auth-buttons flex space-x-4">
+                <button id="signUpButton" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded">Sign Up</button>
+                <button id="signInButton" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded">Sign In</button>
             </div>
-            <div class="auth-buttons">
-                <button id="signUpButton" class="text-blue-500 px-3">Sign Up</button>
-                <button id="signInButton" class="text-blue-500">Sign In</button>
-            </div>
-            <div id="userContainer" class="flex items-center" style="display: none;">
-                <div id="userInfo" class="text-blue-500 mr-4"></div>
-                <button id="signOutButton" class="text-blue-500">Sign Out</button>
+            <div id="userContainer" class="flex items-center space-x-4 hidden">
+                <div id="userInfo" class="text-white"></div>
+                <button id="signOutButton" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded">Sign Out</button>
             </div>
         </div>
     </nav>
 
-    <main class="container mx-auto mt-8">
-        <div id="homeContent">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div>
-                    <h2 class="text-xl font-bold">Songs</h2>
-                    <ul id="randomSongsList">
-                        {% for song in songs %}
-                        <li class="flex items-center">
-                            {{ song.SongTitle }}
-                            <button class="add-to-playlist-btn text-blue-500" data-song-id="{{ song.SongId }}">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                </svg>
-                            </button>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                <div>
-                    <h2 class="text-xl font-bold">Playlists</h2>
-                    <ul id="playlistsList">
-                        {% for playlist in playlists %}
-                        <li class="flex items-center">
-                            {{ playlist.PlaylistName }}
-                            <button class="remove-playlist-btn text-red-500 ml-2" data-playlist-id="{{ playlist.PlaylistId }}">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                <div>
-                    <h2 class="text-xl font-bold">Artists</h2>
-                    <ul id="artistsList">
-                        {% for artist in artists %}
-                        <li>{{ artist.ArtistName }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                <div>
-                    <h2 class="text-xl font-bold">Albums</h2>
-                    <ul id="albumsList">
-                        {% for album in albums %}
-                        <li>{{ album.AlbumName }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
+    <main class="scale-125 container mx-auto mt-8">
+        <div id="homeContent" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+            <div class="bg-white text-gray-800 p-6 rounded-lg shadow-md overflow-auto max-h-96">
+                <h2 class="text-2xl font-bold mb-4 border-b-2 border-indigo-600 pb-2">Songs</h2>
+                <ul id="randomSongsList" class="space-y-4">
+                    {% for song in songs %}
+                    <li class="hover:scale-125 flex items-center justify-between bg-gray-100 p-3 rounded-lg shadow-sm hover:bg-gray-200">
+                        <span class="font-medium">{{ song.SongTitle }}</span>
+                        <button class="add-to-playlist-btn text-indigo-600 hover:text-indigo-800" data-song-id="{{ song.SongId }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </button>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+
+            <div class="bg-white text-gray-800 p-6 rounded-lg shadow-md overflow-auto max-h-96">
+                <h2 class="text-2xl font-bold mb-4 border-b-2 border-indigo-600 pb-2">Playlists</h2>
+                <ul id="playlistsList" class="space-y-4">
+                    {% for playlist in playlists %}
+                    <li class="flex items-center justify-between bg-gray-100 p-3 rounded-lg shadow-sm hover:bg-gray-200">
+                        <span class="font-medium">{{ playlist.PlaylistName }}</span>
+                        <button class="remove-playlist-btn text-red-600 hover:text-red-800 ml-2" data-playlist-id="{{ playlist.PlaylistId }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+
+            <div class="bg-white text-gray-800 p-6 rounded-lg shadow-md overflow-auto max-h-96">
+                <h2 class="text-2xl font-bold mb-4 border-b-2 border-indigo-600 pb-2">Artists</h2>
+                <ul id="artistsList" class="space-y-4">
+                    {% for artist in artists %}
+                    <li class="bg-gray-100 p-3 rounded-lg shadow-sm hover:bg-gray-200 font-medium">{{ artist.ArtistName }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+
+            <div class="bg-white text-gray-800 p-6 rounded-lg shadow-md overflow-auto max-h-96">
+                <h2 class="text-2xl font-bold mb-4 border-b-2 border-indigo-600 pb-2">Albums</h2>
+                <ul id="albumsList" class="space-y-4">
+                    {% for album in albums %}
+                    <li class="bg-gray-100 p-3 rounded-lg shadow-sm hover:bg-gray-200 font-medium">{{ album.AlbumName }}</li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
     </main>
 
-    <div id="authModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center" style="display: none;">
-        <div class="bg-white p-4 rounded shadow-md relative">
-            <button id="closeAuthModal" class="absolute top-2 right-2 text-gray-500">&times;</button>
-            <h2 id="authTitle" class="text-xl font-bold">Sign In</h2>
-            <form id="authForm">
-                <div id="signUpFields" style="display: none;">
-                    <label for="username" class="block text-sm font-medium text-gray-700">Username:</label>
-                    <input type="text" id="username" name="username" class="mt-1 block w-full">
-                    <label for="nameSurname" class="block text-sm font-medium text-gray-700 mt-4">Name Surname:</label>
-                    <input type="text" id="nameSurname" name="nameSurname" class="mt-1 block w-full">
+
+    <div id="authModal" class="fixed inset-0 bg-gray-900 bg-opacity-85 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded shadow-lg relative w-96">
+            <button id="closeAuthModal" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600">&times;</button>
+            <h2 id="authTitle" class="text-2xl font-bold text-gray-800 mb-4">Sign In</h2>
+            <form id="authForm" class="space-y-4">
+                <div id="signUpFields" class="hidden">
+                    <label for="username" class="block text-sm font-medium text-gray-900">Username:</label>
+                    <input type="text" id="username" name="username" class="w-full px-3 py-2 border rounded text-gray-800">
+                    <label for="nameSurname" class="block text-sm font-medium mt-4 text-gray-900">Name Surname:</label>
+                    <input type="text" id="nameSurname" name="nameSurname" class="w-full px-3 py-2 border rounded text-gray-800">
                 </div>
-                <label for="email" class="block text-sm font-medium text-gray-700">Email:</label>
-                <input type="email" id="email" name="email" class="mt-1 block w-full" required>
-                <label for="password" class="block text-sm font-medium text-gray-700 mt-4">Password:</label>
-                <input type="password" id="password" name="password" class="mt-1 block w-full" required>
-                <button type="submit" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Submit</button>
+                <label for="email" class="block text-sm font-medium text-gray-900">Email:</label>
+                <input type="email" id="email" name="email" class="w-full px-3 py-2 border rounded text-gray-800" required>
+                <label for="password" class="block text-sm font-medium text-gray-900">Password:</label>
+                <input type="password" id="password" name="password" class="w-full px-3 py-2 border rounded text-gray-800" required>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded">Submit</button>
             </form>
         </div>
     </div>
 
-    <div id="playlistModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-        <div class="bg-white p-4 rounded shadow-md">
-            <h2 class="text-xl font-bold">Select Playlist</h2>
-            <ul id="playlistList">
+
+    <div id="playlistModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded shadow-lg w-96">
+            <h2 class="text-xl font-bold mb-4 text-gray-800">Select Playlist</h2>
+            <ul id="playlistList" class="space-y-2">
                 {% for playlist in playlists %}
                 <li>
-                    <button class="select-playlist-btn" data-playlist-id="{{ playlist.PlaylistId }}">{{ playlist.PlaylistName }}</button>
+                    <button class="select-playlist-btn text-indigo-600 hover:text-indigo-800" data-playlist-id="{{ playlist.PlaylistId }}">
+                        {{ playlist.PlaylistName }}
+                    </button>
                 </li>
                 {% endfor %}
             </ul>
-            <button id="createNewPlaylist" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Create New</button>
-            <button id="closePlaylistModal" class="mt-4 bg-gray-500 text-white py-2 px-4 rounded">Close</button>
+            <div class="flex justify-end space-x-4 mt-4">
+                <button id="createNewPlaylist" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded">Create New</button>
+                <button id="closePlaylistModal" class="bg-gray-600 hover:bg-gray-500 text-white px-4 py-2 rounded">Close</button>
+            </div>
         </div>
     </div>
 </body>
