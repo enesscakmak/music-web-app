@@ -6,102 +6,104 @@
     <title>Add New Entry</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script defer src="../static/script.js"></script>
-    <style>
-        input {
-            border: 1px solid black;
-        }
-    </style>
 </head>
-<body class="bg-gray-100">
-    <nav class="bg-white shadow-md p-4">
+<body class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-gray-100 min-h-screen">
+    <nav class="bg-purple-800 shadow-md p-4 sticky top-0 z-10">
         <div class="container mx-auto flex justify-between">
             <div>
-                <button id="homeButton" class="text-blue-500">Home</button>
+                <button id="homeButton" class="text-gray-200 hover:text-white text-xl font-semibold">Home</button>
             </div>
         </div>
     </nav>
-    <main class="container mx-auto mt-8">
-        <form id="addForm">
+    <main class="container mx-auto mt-8 p-6 bg-white rounded-lg shadow-lg">
+        <h1 class="text-2xl font-bold text-gray-800 mb-6">Add New Entry</h1>
+        <form id="addForm" style="color: black;" class="space-y-6">
             <div>
                 <label for="dataType" class="block text-sm font-medium text-gray-700">Data Type:</label>
-                <select id="dataType" name="dataType" class="mt-1 block w-full">
-                    <option value="song">Song</option>
+                <select style="color: black;" id="dataType" name="dataType" class="mt-1 block w-full p-2 border rounded">
+                    <option  value="song">Song</option>
                     <option value="album">Album</option>
                     <option value="artist">Artist</option>
                 </select>
             </div>
             <div id="songFields" class="mt-4">
                 <label for="title" class="block text-sm font-medium text-gray-700">Title:</label>
-                <input type="text" id="title" name="title" class="mt-1 block w-full">
+                <input  type="text" id="title" name="title" class="mt-1 block w-full p-2 border rounded" placeholder="Enter song title">
+
                 <label for="duration" class="block text-sm font-medium text-gray-700 mt-4">Duration:</label>
-                <input type="text" id="duration" name="duration" class="mt-1 block w-full">
+                <input type="text" id="duration" name="duration" class="mt-1 block w-full p-2 border rounded" placeholder="e.g., 3:45">
+
                 <label for="releaseDate" class="block text-sm font-medium text-gray-700 mt-4">Release Date:</label>
-                <input type="date" id="releaseDate" name="releaseDate" class="mt-1 block w-full">
+                <input type="date" id="releaseDate" name="releaseDate" class="mt-1 block w-full p-2 border rounded">
+
                 <label for="artistName" class="block text-sm font-medium text-gray-700 mt-4">Artist Name:</label>
-                <input type="text" id="artistName" name="artistName" class="mt-1 block w-full">
+                <input type="text" id="artistName" name="artistName" class="mt-1 block w-full p-2 border rounded" placeholder="Enter artist name">
+
                 <label for="albumName" class="block text-sm font-medium text-gray-700 mt-4">Album Name:</label>
-                <input type="text" id="albumName" name="albumName" class="mt-1 block w-full">
+                <input type="text" id="albumName" name="albumName" class="mt-1 block w-full p-2 border rounded" placeholder="Enter album name">
             </div>
-            <div id="albumFields" class="mt-4" style="display: none;">
+            <div id="albumFields" class="mt-4 hidden">
                 <label for="albumName" class="block text-sm font-medium text-gray-700">Album Name:</label>
-                <input type="text" id="albumName" name="albumName" class="mt-1 block w-full">
+                <input type="text" id="albumName" name="albumName" class="mt-1 block w-full p-2 border rounded" placeholder="Enter album name">
+
                 <label for="releaseYear" class="block text-sm font-medium text-gray-700 mt-4">Release Year:</label>
-                <input type="text" id="releaseYear" name="releaseYear" class="mt-1 block w-full">
+                <input type="text" id="releaseYear" name="releaseYear" class="mt-1 block w-full p-2 border rounded" placeholder="Enter release year">
+
                 <label for="artistName" class="block text-sm font-medium text-gray-700 mt-4">Artist Name:</label>
-                <input type="text" id="artistName" name="artistName" class="mt-1 block w-full">
+                <input type="text" id="artistName" name="artistName" class="mt-1 block w-full p-2 border rounded" placeholder="Enter artist name">
             </div>
-            <div id="artistFields" class="mt-4" style="display: none;">
+            <div id="artistFields" class="mt-4 hidden">
                 <label for="artistName" class="block text-sm font-medium text-gray-700">Artist Name:</label>
-                <input type="text" id="artistName" name="artistName" class="mt-1 block w-full">
+                <input type="text" id="artistName" name="artistName" class="mt-1 block w-full p-2 border rounded" placeholder="Enter artist name">
             </div>
-            <button type="submit" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Submit</button>
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2 px-4 rounded">Submit</button>
         </form>
     </main>
     <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const dataType = document.getElementById('dataType');
-        const songFields = document.getElementById('songFields');
-        const albumFields = document.getElementById('albumFields');
-        const artistFields = document.getElementById('artistFields');
+        document.addEventListener('DOMContentLoaded', () => {
+            const dataType = document.getElementById('dataType');
+            const songFields = document.getElementById('songFields');
+            const albumFields = document.getElementById('albumFields');
+            const artistFields = document.getElementById('artistFields');
 
-        dataType.addEventListener('change', (e) => {
-            const value = e.target.value;
-            songFields.style.display = value === 'song' ? 'block' : 'none';
-            albumFields.style.display = value === 'album' ? 'block' : 'none';
-            artistFields.style.display = value === 'artist' ? 'block' : 'none';
-        });
-
-        document.getElementById('homeButton').addEventListener('click', () => {
-            window.location.href = '/';
-        });
-
-        document.getElementById('addForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = {};
-            formData.forEach((value, key) => {
-                data[key] = value;
+            dataType.addEventListener('change', (e) => {
+                const value = e.target.value;
+                songFields.style.display = value === 'song' ? 'block' : 'none';
+                albumFields.style.display = value === 'album' ? 'block' : 'none';
+                artistFields.style.display = value === 'artist' ? 'block' : 'none';
             });
 
-            fetch('/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    alert(data.message);
-                    window.location.reload();
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            })
-            .catch(error => console.error('Error:', error));
+            document.getElementById('homeButton').addEventListener('click', () => {
+                window.location.href = '/';
+            });
+
+            document.getElementById('addForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const data = {};
+                formData.forEach((value, key) => {
+                    data[key] = value;
+                });
+
+                fetch('/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert(data.message);
+                        window.location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
         });
-    });
-</script>
+    </script>
 </body>
 </html>
