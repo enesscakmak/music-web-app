@@ -47,9 +47,11 @@ def home():
 def add():
     if request.method == 'POST':
         data = request.get_json()
-        data_type = data.get('dataType')
+        data_type = data.get('data_type')  # Ensure this matches the JavaScript fetch request
         conn = get_db_connection()
         cursor = conn.cursor()
+
+        response = {}
 
         try:
             if data_type == 'song':
@@ -58,22 +60,43 @@ def add():
                 release_date = data.get('releaseDate')
                 artist_name = data.get('artistName')
                 album_name = data.get('albumName')
-                cursor.execute("INSERT INTO Song (SongTitle, SongDuration, SongReleaseDate, ArtistId, AlbumId) VALUES (%s, %s, %s, (SELECT ArtistId FROM Artist WHERE ArtistName=%s), (SELECT AlbumId FROM Album WHERE AlbumName=%s))",
-                               (title, duration, release_date, artist_name, album_name))
-                response = {'status': 'success', 'message': 'Song added successfully!'}
+                if not title or not duration or not release_date or not artist_name or not album_name:
+                    response = {'status': 'error', 'message': 'All song fields are required.'}
+                else:
+                    cursor.execute("INSERT INTO Song (SongTitle, SongDuration, SongReleaseDate, ArtistId, AlbumId) VALUES (%s, %s, %s, (SELECT ArtistId FROM Artist WHERE ArtistName=%s), (SELECT AlbumId FROM Album WHERE AlbumName=%s))",
+                                   (title, duration, release_date, artist_name, album_name))
+                    response = {'status': 'success', 'message': 'Song added successfully!'}
 
             elif data_type == 'album':
-                name = data.get('albumName')
+                album_name = data.get('albumName')
                 release_year = data.get('releaseYear')
                 artist_name = data.get('artistName')
-                cursor.execute("INSERT INTO Album (AlbumName, AlbumReleaseYear, ArtistId) VALUES (%s, %s, (SELECT ArtistId FROM Artist WHERE ArtistName=%s))",
-                               (name, release_year, artist_name))
-                response = {'status': 'success', 'message': 'Album added successfully!'}
+                if not album_name or not release_year or not artist_name:
+                    response = {'status': 'error', 'message': 'All album fields are required.'}
+                else:
+                    cursor.execute("INSERT INTO Album (AlbumName, AlbumReleaseYear, ArtistId) VALUES (%s, %s, (SELECT ArtistId FROM Artist WHERE ArtistName=%s))",
+                                   (album_name, release_year, artist_name))
+                    response = {'status': 'success', 'message': 'Album added successfully!'}
 
             elif data_type == 'artist':
                 artist_name = data.get('artistName')
-                cursor.execute("INSERT INTO Artist (ArtistName) VALUES (%s)", (artist_name,))
-                response = {'status': 'success', 'message': 'Artist added successfully!'}
+                if not artist_name:
+                    response = {'status': 'error', 'message': 'Artist name is required.'}
+                else:
+                    cursor.execute("INSERT INTO Artist (ArtistName) VALUES (%s)", (artist_name,))
+                    response = {'status': 'success', 'message': 'Artist added successfully!'}
+
+            elif data_type == 'playlist':
+                playlist_name = data.get('playlistName')
+                user_id = session.get('user_id')
+                if not user_id:
+                    response = {'status': 'error', 'message': 'User not logged in.'}
+                elif not playlist_name:
+                    response = {'status': 'error', 'message': 'Playlist name is required.'}
+                else:
+                    cursor.execute("INSERT INTO Playlist (PlaylistName, PlaylistCreationDate, UserId) VALUES (%s, %s, %s)",
+                                   (playlist_name, date.today(), user_id))
+                    response = {'status': 'success', 'message': 'Playlist added successfully!'}
 
             conn.commit()
         except Exception as e:
@@ -82,9 +105,10 @@ def add():
         finally:
             cursor.close()
             conn.close()
-            return jsonify(response)
+            return jsonify(response) if response else redirect(url_for('home'))
     else:
         return render_template('add.html')
+
 
 @app.route('/signup', methods=['POST'])
 def signup():
