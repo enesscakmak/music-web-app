@@ -2,9 +2,11 @@ from flask import Flask, render_template, request, jsonify, session, redirect, u
 import mysql.connector
 from datetime import date
 import logging
+import os
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+
+app.secret_key = os.urandom(24)
 
 db_config = {
     'host': 'localhost',
@@ -29,6 +31,7 @@ def home():
 
 
     user_id = session.get('user_id')
+
     if user_id:
         cursor.execute("SELECT PlaylistId, PlaylistName FROM Playlist WHERE UserId = %s;", (user_id,))
         playlists = cursor.fetchall()
@@ -71,7 +74,9 @@ def add():
                 if not title or not duration or not release_date or not artist_name or not album_name:
                     response = {'status': 'error', 'message': 'All song fields are required.'}
                 else:
-                    cursor.execute("INSERT INTO Song (SongTitle, SongDuration, SongReleaseDate, ArtistId, AlbumId) VALUES (%s, %s, %s, (SELECT ArtistId FROM Artist WHERE ArtistName=%s), (SELECT AlbumId FROM Album WHERE AlbumName=%s))",
+                    cursor.execute("""INSERT INTO Song (SongTitle, SongDuration, SongReleaseDate, ArtistId, AlbumId)
+                                             VALUES (%s, %s, %s, (SELECT ArtistId FROM Artist WHERE ArtistName=%s), 
+                                             (SELECT AlbumId FROM Album WHERE AlbumName=%s))""",
                                    (title, duration, release_date, artist_name, album_name))
                     response = {'status': 'success', 'message': 'Song added successfully!'}
 
@@ -159,9 +164,9 @@ def signin():
 
         if user:
             session['user_id'] = user['UserId']
-            response = {'status': 'success', 'message': 'User signed in successfully!', 'nameSurname': user['UserNameSurname']}
+            response = {'status': 'success', 'message': 'User signed in successfully!'}
         else:
-            response = {'status': 'error', 'message': 'Invalid email or password!'}
+            response = {'status': 'error', 'message': 'Invalid email or password'}
     except Exception as e:
         response = {'status': 'error', 'message': str(e)}
 
