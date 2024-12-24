@@ -21,7 +21,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const createNewPlaylistButton = document.getElementById('createNewPlaylist');
     const playlistList = document.getElementById('playlistList');
     const removePlaylistButtons = document.querySelectorAll('.remove-playlist-btn');
+    const addForm = document.getElementById('addForm');
     let selectedSongId = null;
+
+    if (addForm) {
+        addForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(addForm);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            // Ensure data_type is included in the payload
+            data['data_type'] = document.getElementById('dataType').value;
+
+            fetch('/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert(data.message);
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    }
 
     addToPlaylistButtons.forEach(button => {
         button.addEventListener('click', () => {
