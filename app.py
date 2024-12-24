@@ -24,7 +24,9 @@ def home():
     cursor = conn.cursor(dictionary=True)
 
     cursor.execute("SELECT SongId, SongTitle FROM Song ORDER BY RAND() LIMIT 5;")
+
     songs = cursor.fetchall()
+
 
     user_id = session.get('user_id')
     if user_id:
@@ -33,7 +35,10 @@ def home():
     else:
         playlists = []
 
-    cursor.execute("SELECT ArtistId, ArtistName FROM Artist ORDER BY RAND() LIMIT 5;")
+    cursor.execute("""SELECT ArtistName, COUNT(SongId) AS SoungCount
+                   FROM Artist JOIN Song ON Artist.ArtistId = Song.ArtistId
+                   GROUP BY ArtistName
+                   HAVING COUNT(SongId) > 0 ORDER BY RAND() LIMIT 5;""")
     artists = cursor.fetchall()
 
     cursor.execute("SELECT AlbumId, AlbumName FROM Album ORDER BY RAND() LIMIT 5;")
